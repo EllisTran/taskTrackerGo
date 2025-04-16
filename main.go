@@ -26,6 +26,8 @@ func main() {
 		cmd = version.NewVersionCommand()
 	case "add":
 		cmd = command.NewAddCommand()
+	case "delete":
+		cmd = command.NewDeleteCommand()
 	default:
 		usageAndExit(fmt.Sprintf("taskgo: '%s' is not a taskgo command.\n", os.Args[1]))
 	}

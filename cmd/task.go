@@ -6,8 +6,6 @@ import (
 	"log"
 	"os"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type TaskStatus string
@@ -19,39 +17,58 @@ const (
 )
 
 type Task struct {
-	Id          uuid.UUID  `json:"id"` // uuid
+	Id          uint64     `json:"id"` // uuid
 	Description string     `json:"description"`
 	Status      TaskStatus `json:"status"`
 	CreatedAt   time.Time  `json:"createdAt"` //date time
 }
 
 func addTask(description string, status TaskStatus) {
-	// var tasks []Task
 	tasks := loadTasks()
+	taskId := len(tasks) // Typically this would already handled in db but too lazy to actually check if already exists
 	task := Task{
-		Id:          uuid.New(),
+		Id:          uint64(taskId),
 		Description: description,
 		Status:      status,
 		CreatedAt:   time.Now(),
 	}
+	fmt.Printf("Task: %v", task)
 	tasks = append(tasks, task)
 
-	// Convert to JSON
-	jsonData, err := json.Marshal(tasks)
-	if err != nil {
-		fmt.Printf("Error: %s", err)
-		return
+	saveToJson(tasks)
+}
+
+func updateTask() {}
+func deleteTask(taskId uint64) {
+	tasks := loadTasks()
+
+	newTasks := []Task{}
+	for idx, val := range tasks {
+		if val.Id == taskId {
+			fmt.Printf("index:\t%d\ntaskId:\t%d\nvalue:\t%v\n", idx, taskId, val)
+			newTasks = append(tasks[:idx], tasks[idx+1:]...)
+			break
+		}
 	}
 
-	saveToJson(jsonData)
+	if len(newTasks) == 0 {
+		fmt.Printf("Task Id: %v does not exist", taskId)
+		saveToJson(tasks)
+	} else {
+		saveToJson(newTasks)
+	}
 }
+
+func listTasks()           {}
+func listDoneTasks()       {}
+func listTodoTasks()       {}
+func listInProgressTasks() {}
 
 func loadFilename(filename string) []byte {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatalf("unable to read file: %v", err)
 	}
-	fmt.Println(data)
 	return data
 }
 func loadTasks() []Task {
@@ -63,17 +80,26 @@ func loadTasks() []Task {
 
 	var tasks []Task
 	if err := json.Unmarshal(data, &tasks); err != nil {
-		fmt.Println("lala")
+		formattedError := fmt.Errorf("Failed to Unmarshal JSON: %w", err)
+		fmt.Println(formattedError)
 		return nil
 	}
 
+	fmt.Printf("%v", string(data))
 	return tasks
 }
 
-func saveToJson(json []byte) {
+func saveToJson(tasks []Task) {
+	// Convert to JSON
+	jsonData, err := json.MarshalIndent(tasks, "", " ")
+	if err != nil {
+		fmt.Printf("Error: %s", err)
+		return
+	}
+
 	fmt.Println("Saving tasks as json...")
 
-	err := os.WriteFile("tasks.json", json, os.ModePerm)
+	err = os.WriteFile("tasks.json", jsonData, os.ModePerm)
 
 	if err != nil {
 		fmt.Printf("Error: %s", err)
