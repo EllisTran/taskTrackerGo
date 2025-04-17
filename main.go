@@ -28,6 +28,15 @@ func main() {
 		cmd = command.NewAddCommand()
 	case "delete":
 		cmd = command.NewDeleteCommand()
+	case "update":
+		cmd = command.NewUpdateCommand()
+	case "list":
+		cmd = command.NewListCommand()
+	case "mark-done":
+		cmd = command.NewMarkDoneCommand()
+	case "mark-in-progress":
+		cmd = command.NewMarkInProgressCommand()
+
 	default:
 		usageAndExit(fmt.Sprintf("taskgo: '%s' is not a taskgo command.\n", os.Args[1]))
 	}

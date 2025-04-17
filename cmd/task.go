@@ -38,7 +38,26 @@ func addTask(description string, status TaskStatus) {
 	saveToJson(tasks)
 }
 
-func updateTask() {}
+func updateTask(taskId uint64, description string) {
+	tasks := loadTasks()
+	for idx, val := range tasks {
+		if val.Id == taskId {
+			tasks[idx].Description = description
+		}
+	}
+	saveToJson(tasks)
+}
+
+func markTask(taskId uint64, status TaskStatus) {
+	tasks := loadTasks()
+	for idx, val := range tasks {
+		if val.Id == taskId {
+			tasks[idx].Status = TaskStatus(status)
+		}
+	}
+	saveToJson(tasks)
+}
+
 func deleteTask(taskId uint64) {
 	tasks := loadTasks()
 
@@ -59,10 +78,26 @@ func deleteTask(taskId uint64) {
 	}
 }
 
-func listTasks()           {}
-func listDoneTasks()       {}
-func listTodoTasks()       {}
-func listInProgressTasks() {}
+func printHeader() {
+	fmt.Println("TaskId\t\tStatus\t\tCreatedAt\t\t\t\t\tDescription\t")
+
+}
+func listTasks() {
+	tasks := loadTasks()
+	printHeader()
+	for _, val := range tasks {
+		fmt.Printf("%d\t\t%s\t\t%s\t\t%s\n", val.Id, val.Status, val.CreatedAt, val.Description)
+	}
+}
+func listTasksWithStatus(status TaskStatus) {
+	tasks := loadTasks()
+	printHeader()
+	for _, val := range tasks {
+		if val.Status == TaskStatus(status) {
+			fmt.Printf("%d\t\t%s\t\t%s\t\t%s\n", val.Id, val.Status, val.CreatedAt, val.Description)
+		}
+	}
+}
 
 func loadFilename(filename string) []byte {
 	data, err := os.ReadFile(filename)

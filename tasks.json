@@ -1,14 +1,20 @@
 [
  {
   "id": 0,
-  "description": " go to grocery store",
+  "description": "go to grocery store",
   "status": "todo",
   "createdAt": "2025-04-15T20:01:40.584195-04:00"
  },
  {
   "id": 1,
-  "description": " go to grocery store",
-  "status": "todo",
+  "description": "buy eggs \u0026 bacon",
+  "status": "done",
   "createdAt": "2025-04-15T20:01:42.182343-04:00"
+ },
+ {
+  "id": 2,
+  "description": "buy almond milk",
+  "status": "done",
+  "createdAt": "2025-04-16T18:38:44.735431-04:00"
  }
 ]
